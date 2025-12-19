@@ -30,15 +30,10 @@ a:hover {
 
 body {
   margin: 0;
-<<<<<<< HEAD
   min-width: 320px;
   min-height: 100vh;
   width: 100%;
-=======
   padding: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  width: 100%;
 }
 
 #root {
@@ -50,7 +45,6 @@ html {
   width: 100%;
   margin: 0;
   padding: 0;
->>>>>>> 2763f66f4448aee34d7a89f5f2f8f5e8c8708d28
 }
 
 h1 {
