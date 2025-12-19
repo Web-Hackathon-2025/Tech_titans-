@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BookingCard from '../components/BookingCard';
 
 const MyBookings = () => {
+  const navigate = useNavigate();
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -12,11 +15,16 @@ const MyBookings = () => {
       setIsLoading(true);
       setError(null);
       try {
-        // Example API call (replace when backend is ready):
-        // const response = await fetch('/api/bookings/me');
-        // const data = await response.json();
-        // setBookings(data);
-        setBookings([]);
+        if (!API_BASE) {
+          setBookings([]);
+          return;
+        }
+        const response = await fetch(`${API_BASE}/bookings/me`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch bookings');
+        }
+        const data = await response.json();
+        setBookings(data || []);
       } catch (err) {
         console.error('Error loading bookings:', err);
         setError('Unable to load your bookings. Please try again later.');
@@ -26,11 +34,11 @@ const MyBookings = () => {
     };
 
     fetchBookings();
-  }, []);
+  }, [API_BASE]);
 
   const handleViewDetails = (bookingId) => {
-    // TODO: Navigate to booking detail page
-    console.log('View booking details for:', bookingId);
+    // For now, direct completed bookings to review; otherwise to detail (to be added)
+    navigate(`/review/${bookingId}`);
   };
 
   const renderContent = () => {

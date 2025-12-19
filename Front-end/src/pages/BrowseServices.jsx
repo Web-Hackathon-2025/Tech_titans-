@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ServiceCard from '../components/ServiceCard';
 
 const BrowseServices = () => {
+  const navigate = useNavigate();
+  const { search } = useLocation();
+  const params = new URLSearchParams(search);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+
   const [selectedCategory, setSelectedCategory] = useState('');
   const [location, setLocation] = useState('');
   const [services, setServices] = useState([]);
@@ -19,19 +25,40 @@ const BrowseServices = () => {
 
   // TODO: API Integration Point 1 - Fetch services on component mount
   // Replace this useEffect with actual API call
+  // Initialize filters from URL params
+  useEffect(() => {
+    const urlCategory = params.get('category') || '';
+    const urlLocation = params.get('location') || '';
+    setSelectedCategory(urlCategory);
+    setLocation(urlLocation);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // run once on mount
+
+  // Fetch services when filters change
   useEffect(() => {
     const fetchServices = async () => {
       setIsLoading(true);
       setError(null);
-      
-      try {
-        // TODO: Replace with actual API endpoint
-        // Example: const response = await fetch(`/api/services?category=${selectedCategory}&location=${location}`);
-        // const data = await response.json();
-        // setServices(data);
-        
-        // Placeholder: Empty array to show empty state initially
+
+      // If API base is not provided, keep empty state but avoid failing
+      if (!API_BASE) {
         setServices([]);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const query = new URLSearchParams({
+          category: selectedCategory || '',
+          location: location || '',
+        }).toString();
+
+        const response = await fetch(`${API_BASE}/services?${query}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch services');
+        }
+        const data = await response.json();
+        setServices(data || []);
       } catch (err) {
         setError('Failed to load services. Please try again later.');
         console.error('Error fetching services:', err);
@@ -41,16 +68,14 @@ const BrowseServices = () => {
     };
 
     fetchServices();
-  }, [selectedCategory, location]); // Re-fetch when filters change
+  }, [selectedCategory, location, API_BASE]);
 
   // TODO: API Integration Point 2 - Handle filter changes
   // This useEffect will trigger API calls when filters change
   // The API should accept category and location as query parameters
 
   const handleViewProfile = (providerId) => {
-    // TODO: Navigate to provider profile page
-    // Example: navigate(`/provider/${providerId}`);
-    console.log('Navigate to provider profile:', providerId);
+    navigate(`/provider/${providerId}`);
   };
 
   return (

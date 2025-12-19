@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const CreateServiceRequest = () => {
-  // TODO: Get provider ID from route params if needed
+  // Get provider ID from route params if needed
   const { providerId } = useParams();
   const navigate = useNavigate();
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
 
   const [formData, setFormData] = useState({
     serviceType: '',
@@ -16,15 +17,30 @@ const CreateServiceRequest = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
-  // TODO: Fetch available services from API based on providerId
-  // This will be populated from API later
-  const availableServices = [
+  const [availableServices, setAvailableServices] = useState([
     'Leak Repair',
     'Pipe Installation',
     'Drain Cleaning',
     'Emergency Service',
-  ];
+  ]);
+
+  // Fetch available services from API based on providerId
+  useEffect(() => {
+    const fetchServices = async () => {
+      if (!API_BASE || !providerId) return;
+      try {
+        const res = await fetch(`${API_BASE}/providers/${providerId}/services`);
+        if (!res.ok) throw new Error('Failed to load services');
+        const data = await res.json();
+        if (Array.isArray(data) && data.length) {
+          setAvailableServices(data.map((s) => s.name || s.title || s));
+        }
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      }
+    };
+    fetchServices();
+  }, [API_BASE, providerId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,48 +54,49 @@ const CreateServiceRequest = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // TODO: Replace with actual API call
-    // Example:
-    // try {
-    //   const response = await fetch(`/api/bookings`, {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({
-    //       providerId,
-    //       ...formData
-    //     })
-    //   });
-    //   const result = await response.json();
-    //   setShowSuccess(true);
-    // } catch (error) {
-    //   console.error('Error creating service request:', error);
-    // }
-
-    // Placeholder: Log form data
-    console.log('Service Request Data:', {
-      providerId,
-      ...formData,
-    });
-
-    // Simulate API call delay
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setShowSuccess(true);
-      
-      // Reset form after showing success message
-      setTimeout(() => {
-        setFormData({
-          serviceType: '',
-          preferredDate: '',
-          preferredTime: '',
-          address: '',
-          notes: '',
+    // If API base is provided, attempt POST
+    if (API_BASE) {
+      try {
+        const response = await fetch(`${API_BASE}/bookings`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            providerId,
+            ...formData,
+          }),
         });
-        setShowSuccess(false);
-        // TODO: Navigate to bookings page or show confirmation
-        // navigate('/my-bookings');
-      }, 3000);
-    }, 1000);
+        if (!response.ok) throw new Error('Failed to create booking');
+        setShowSuccess(true);
+      } catch (error) {
+        console.error('Error creating service request:', error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else {
+      // Placeholder logging when API base is not set
+      console.log('Service Request Data:', {
+        providerId,
+        ...formData,
+      });
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setShowSuccess(true);
+      }, 500);
+    }
+
+    // Reset form after showing success message
+    setTimeout(() => {
+      setFormData({
+        serviceType: '',
+        preferredDate: '',
+        preferredTime: '',
+        address: '',
+        notes: '',
+      });
+      setShowSuccess(false);
+      // TODO: Navigate to bookings page or show confirmation
+      // navigate('/my-bookings');
+    }, 3000);
   };
 
   // Get today's date in YYYY-MM-DD format for min date

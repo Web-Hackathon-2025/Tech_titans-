@@ -26,23 +26,42 @@ const ReviewSubmission = () => {
 
     setIsSubmitting(true);
 
-    // TODO: Replace with API call
-    console.log('Review submitted:', {
+    const payload = {
       bookingId,
       rating,
       comment: comment.trim(),
-    });
+    };
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitted(true);
-      setComment('');
-      setRating(0);
-      setHoverRating(0);
-
-      // Optionally navigate back after a delay
-      // navigate(-1);
-    }, 600);
+    if (API_BASE) {
+      (async () => {
+        try {
+          const response = await fetch(`${API_BASE}/reviews`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (!response.ok) throw new Error('Failed to submit review');
+        } catch (error) {
+          console.error('Error submitting review:', error);
+        } finally {
+          setIsSubmitting(false);
+          setSubmitted(true);
+          setComment('');
+          setRating(0);
+          setHoverRating(0);
+        }
+      })();
+    } else {
+      // Placeholder logging when API base is not set
+      console.log('Review submitted:', payload);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setSubmitted(true);
+        setComment('');
+        setRating(0);
+        setHoverRating(0);
+      }, 600);
+    }
   };
 
   const renderStars = () => {

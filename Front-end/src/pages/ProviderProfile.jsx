@@ -1,56 +1,86 @@
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const ProviderProfile = () => {
-  // TODO: Get provider ID from route params
   const { providerId } = useParams();
-  
-  // TODO: Replace with API call to fetch provider data
-  // const [provider, setProvider] = useState(null);
-  // useEffect(() => {
-  //   fetchProviderData(providerId).then(setProvider);
-  // }, [providerId]);
+  const navigate = useNavigate();
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
 
-  // Placeholder data - will be replaced with API data
-  const provider = {
-    id: 'provider-1',
-    name: "John's Plumbing Services",
-    category: 'Plumber',
-    rating: 4.7,
-    totalReviews: 127,
-    location: 'Downtown, City',
-    isAvailable: true,
-    availabilityStatus: 'Available now',
-    description: 'Professional plumbing services with over 10 years of experience. Specialized in residential and commercial plumbing, leak repairs, pipe installation, and emergency services.',
-    services: [
-      { name: 'Leak Repair', price: 500, duration: '1-2 hours' },
-      { name: 'Pipe Installation', price: 1500, duration: '2-4 hours' },
-      { name: 'Drain Cleaning', price: 800, duration: '1 hour' },
-      { name: 'Emergency Service', price: 2000, duration: '1-3 hours' },
-    ],
-    reviews: [
-      {
-        id: 1,
-        customerName: 'Sarah Johnson',
-        rating: 5,
-        date: '2024-01-15',
-        comment: 'Excellent service! John arrived on time and fixed the leak quickly. Very professional and reasonably priced.',
-      },
-      {
-        id: 2,
-        customerName: 'Michael Chen',
-        rating: 4,
-        date: '2024-01-10',
-        comment: 'Good work, but took a bit longer than expected. Still satisfied with the quality.',
-      },
-      {
-        id: 3,
-        customerName: 'Emily Davis',
-        rating: 5,
-        date: '2024-01-05',
-        comment: 'Highly recommend! Fast response and great communication throughout the process.',
-      },
-    ],
-  };
+  const [provider, setProvider] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch provider details
+  useEffect(() => {
+    const fetchProvider = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      // If no API base, fall back to placeholder data
+      if (!API_BASE) {
+        setProvider({
+          id: providerId || 'provider-1',
+          name: "John's Plumbing Services",
+          category: 'Plumber',
+          rating: 4.7,
+          totalReviews: 127,
+          location: 'Downtown, City',
+          isAvailable: true,
+          availabilityStatus: 'Available now',
+          description:
+            'Professional plumbing services with over 10 years of experience. Specialized in residential and commercial plumbing, leak repairs, pipe installation, and emergency services.',
+          services: [
+            { name: 'Leak Repair', price: 500, duration: '1-2 hours' },
+            { name: 'Pipe Installation', price: 1500, duration: '2-4 hours' },
+            { name: 'Drain Cleaning', price: 800, duration: '1 hour' },
+            { name: 'Emergency Service', price: 2000, duration: '1-3 hours' },
+          ],
+          reviews: [
+            {
+              id: 1,
+              customerName: 'Sarah Johnson',
+              rating: 5,
+              date: '2024-01-15',
+              comment:
+                'Excellent service! John arrived on time and fixed the leak quickly. Very professional and reasonably priced.',
+            },
+            {
+              id: 2,
+              customerName: 'Michael Chen',
+              rating: 4,
+              date: '2024-01-10',
+              comment: 'Good work, but took a bit longer than expected. Still satisfied with the quality.',
+            },
+            {
+              id: 3,
+              customerName: 'Emily Davis',
+              rating: 5,
+              date: '2024-01-05',
+              comment: 'Highly recommend! Fast response and great communication throughout the process.',
+            },
+          ],
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/providers/${providerId}`);
+        if (!response.ok) {
+          throw new Error('Failed to load provider');
+        }
+        const data = await response.json();
+        setProvider(data);
+      } catch (err) {
+        console.error('Error loading provider:', err);
+        setError('Unable to load provider details. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProvider();
+  }, [API_BASE, providerId]);
 
   // Render star rating
   const renderStars = (rating) => {
@@ -84,17 +114,26 @@ const ProviderProfile = () => {
   };
 
   const handleRequestService = () => {
-    // TODO: Navigate to booking/request page or open booking modal
-    // Example: navigate(`/book-service/${provider.id}`);
-    console.log('Request service for provider:', provider.id);
+    navigate(`/request-service/${providerId || provider?.id || ''}`);
   };
 
-  if (!provider) {
+  if (isLoading || !provider) {
     return (
       <div className="min-h-screen w-full bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
           <p className="mt-4 text-gray-600">Loading provider profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen w-full bg-gray-50 flex items-center justify-center">
+        <div className="bg-white border border-red-200 rounded-lg p-6 shadow-sm max-w-lg mx-auto">
+          <p className="text-red-700 font-semibold">Error</p>
+          <p className="text-red-600 mt-1">{error}</p>
         </div>
       </div>
     );

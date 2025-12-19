@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Home = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [location, setLocation] = useState('');
 
@@ -14,16 +15,22 @@ const Home = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // TODO: Replace with API call
-    console.log('Search triggered:', {
-      category: selectedCategory,
-      location: location,
+    navigate({
+      pathname: '/browse-services',
+      search: new URLSearchParams({
+        category: selectedCategory,
+        location: location,
+      }).toString(),
     });
   };
 
   const handleCategoryClick = (categoryId) => {
-    // TODO: Navigate to browse services with category filter
-    console.log('Category clicked:', categoryId);
+    navigate({
+      pathname: '/browse-services',
+      search: new URLSearchParams({
+        category: categoryId,
+      }).toString(),
+    });
   };
 
   return (
