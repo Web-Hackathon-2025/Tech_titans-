@@ -35,7 +35,7 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
+            <div className="ml-10 flex items-center space-x-4">
               {navLinks.map((link) => (
                 <NavLink
                   key={link.path}
@@ -51,6 +51,12 @@ const Navbar = () => {
                   {link.label}
                 </NavLink>
               ))}
+              <NavLink
+                to="/login"
+                className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+              >
+                Login
+              </NavLink>
             </div>
           </div>
 
@@ -121,6 +127,13 @@ const Navbar = () => {
                 {link.label}
               </NavLink>
             ))}
+            <NavLink
+              to="/login"
+              className="block px-3 py-2 rounded-md text-base font-semibold transition-colors bg-indigo-600 text-white hover:bg-indigo-700"
+              onClick={closeMenu}
+            >
+              Login
+            </NavLink>
           </div>
         </div>
       )}
