@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './layouts/Navbar';
 import Home from './pages/Home';
@@ -28,6 +29,13 @@ function App() {
       </div>
     </Router>
   );
+=======
+import { RouterProvider } from 'react-router-dom';
+import router from './routes';
+
+function App() {
+  return <RouterProvider router={router} />;
+>>>>>>> 5c50c9625a6ef305fd3556f2a4d28ce1c999fa00
 }
 
 export default App;
