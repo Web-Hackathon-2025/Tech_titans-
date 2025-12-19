@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+pymongo
+pydantic[email]
+passlib
+....
+pip install fastapi uvicorn pymongo python-dotenv passlib[bcrypt] python-jose
