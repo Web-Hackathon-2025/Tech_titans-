@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../utils/api';
+import { registerUser, loginUser } from '../../api/auth';
 
 const Login = () => {
   const navigate = useNavigate();
 
   // Redirect to dashboard if already logged in
   useEffect(() => {
-    if (api.isAuthenticated()) {
+    // Assuming a simple token check for authentication, replace with actual implementation if different
+    const token = localStorage.getItem('token');
+    if (token && window.location.pathname !== '/dashboard') {
       navigate('/dashboard');
     }
   }, [navigate]);
@@ -49,8 +51,8 @@ const Login = () => {
     }
 
     try {
-      const response = await api.login(formData.email, formData.password);
-      api.saveToken(response.access_token);
+      const response = await loginUser(formData);
+      localStorage.setItem('token', response.access_token);
       navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Invalid email or password');
@@ -83,10 +85,10 @@ const Login = () => {
     }
 
     try {
-      await api.register(signupData.name, signupData.email, signupData.password, 'provider');
+      await registerUser({ name: signupData.name, email: signupData.email, password: signupData.password, role: 'provider' });
       // After successful registration, login the user
-      const response = await api.login(signupData.email, signupData.password);
-      api.saveToken(response.access_token);
+      const response = await loginUser({ email: signupData.email, password: signupData.password });
+      localStorage.setItem('token', response.access_token);
       navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');

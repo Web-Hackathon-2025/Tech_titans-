@@ -31,10 +31,13 @@ a {
 
 body {
   margin: 0;
-  padding: 0;
+<<<<<<< HEAD
+=======
   min-width: 320px;
   min-height: 100vh;
   width: 100%;
+>>>>>>> 4fbe288ba67ff941d131745135944f3ea9b8e1fe
+  padding: 0;
 }
 
 #root {

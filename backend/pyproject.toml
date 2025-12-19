@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.125.0",
-    "passlib>=1.7.4",
+    "pip>=25.3",
     "pydantic[email]>=2.12.5",
     "pymongo>=4.15.5",
     "python-jose>=3.5.0",
