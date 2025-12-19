@@ -1,35 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './layouts/Navbar';
+import Home from './pages/Home';
+import BrowseServices from './pages/BrowseServices';
+import MyBookings from './pages/MyBookings';
+import ProviderProfile from './pages/ProviderProfile';
+import CreateServiceRequest from './pages/CreateServiceRequest';
+import ReviewSubmission from './pages/ReviewSubmission';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router>
+      <div className="min-h-screen w-full bg-gray-50">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/browse-services" element={<BrowseServices />} />
+          <Route path="/my-bookings" element={<MyBookings />} />
+          <Route path="/provider/:providerId" element={<ProviderProfile />} />
+          <Route path="/request-service/:providerId?" element={<CreateServiceRequest />} />
+          <Route path="/review/:bookingId?" element={<ReviewSubmission />} />
+        </Routes>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </Router>
+  );
 }
 
-export default App
+export default App;
