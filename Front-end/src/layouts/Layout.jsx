@@ -1,12 +1,41 @@
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import api from '../utils/api';
 
 const Layout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    setIsAuthenticated(api.isAuthenticated());
+    setIsLoading(false);
+  }, []);
 
   const isActive = (path) => {
     return location.pathname === path;
   };
+
+  const handleLogout = () => {
+    api.removeToken();
+    setIsAuthenticated(false);
+    navigate('/login');
+  };
+
+  // Redirect to login if not authenticated
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-gray-500">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 w-full">
@@ -83,7 +112,7 @@ const Layout = () => {
             </div>
             <div className="flex items-center">
               <button
-                onClick={() => navigate('/login')}
+                onClick={handleLogout}
                 className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
               >
                 Logout
