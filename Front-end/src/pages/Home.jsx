@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -34,15 +35,29 @@ const Home = () => {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
               Find trusted local services near you
             </h1>
-            <p className="text-xl sm:text-2xl text-indigo-100 max-w-3xl mx-auto">
+            <p className="text-xl sm:text-2xl text-indigo-100 max-w-3xl mx-auto mb-6 sm:mb-8">
               Connect with skilled professionals in your neighborhood. Quality services, reliable providers, all at your fingertips.
             </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+              <a
+                href="#search"
+                className="px-6 py-3 bg-white text-indigo-700 font-semibold rounded-lg shadow-sm hover:bg-indigo-50 transition-colors w-full sm:w-auto"
+              >
+                Browse services
+              </a>
+              <Link
+                to="/signup"
+                className="px-6 py-3 bg-indigo-700 text-white font-semibold rounded-lg shadow-sm hover:bg-indigo-300  transition-colors w-full sm:w-auto"
+              >
+                Sign up free
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Search Section */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-12">
+      <div id="search" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-12">
         <div className="bg-white rounded-lg shadow-xl p-6 sm:p-8">
           <form onSubmit={handleSearch} className="space-y-4 sm:space-y-0 sm:flex sm:gap-4">
             {/* Category Dropdown */}
@@ -84,7 +99,7 @@ const Home = () => {
             <div className="flex items-end">
               <button
                 type="submit"
-                className="w-full sm:w-auto px-8 py-3 bg-indigo-600 text-black font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
+                className="w-full sm:w-auto px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
               >
                 Search
               </button>
